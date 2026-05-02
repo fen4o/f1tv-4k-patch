@@ -37,32 +37,32 @@ PLATFORMS="$(prop ro.product.cpu.abilist)"
 
 # Screen
 DENSITY="$(prop ro.sf.lcd_density)"
-[[ -z "${DENSITY}" ]] && DENSITY="$(adb shell wm density 2>/dev/null | grep -oP '\d+' | tail -1)"
-SCREEN_SIZE="$(adb shell wm size 2>/dev/null | grep -oP '\d+x\d+' | tail -1)"
+[[ -z "${DENSITY}" ]] && DENSITY="$(adb shell wm density 2>/dev/null | grep -oE '[0-9]+' | tail -1)"
+SCREEN_SIZE="$(adb shell wm size 2>/dev/null | grep -oE '[0-9]+x[0-9]+' | tail -1)"
 SCREEN_WIDTH="${SCREEN_SIZE%x*}"
 SCREEN_HEIGHT="${SCREEN_SIZE#*x}"
 
 # Features
-FEATURES="$(adb shell pm list features 2>/dev/null | sed 's/^feature://' | tr -d '\r' | sort -u | paste -sd',')"
+FEATURES="$(adb shell pm list features 2>/dev/null | sed 's/^feature://' | tr -d '\r' | sort -u | paste -sd',' -)"
 
 # Shared libraries
-SHARED_LIBS="$(adb shell pm list libraries 2>/dev/null | sed 's/^library://' | tr -d '\r' | sort -u | paste -sd',')"
+SHARED_LIBS="$(adb shell pm list libraries 2>/dev/null | sed 's/^library://' | tr -d '\r' | sort -u | paste -sd',' -)"
 
 # GL info
 GL_VERSION_HEX="$(adb shell getprop ro.opengles.version 2>/dev/null | tr -d '\r')"
 [[ -z "${GL_VERSION_HEX}" ]] && GL_VERSION_HEX="196610"
 
 # GL extensions - dumpsys can be verbose, try to extract
-GL_EXTENSIONS="$(adb shell dumpsys SurfaceFlinger 2>/dev/null | grep -oP 'GL_[A-Z_a-z0-9]+' | sort -u | paste -sd',')"
+GL_EXTENSIONS="$(adb shell dumpsys SurfaceFlinger 2>/dev/null | grep -oE 'GL_[A-Za-z0-9_]+' | sort -u | paste -sd',' -)"
 [[ -z "${GL_EXTENSIONS}" ]] && GL_EXTENSIONS="GL_OES_EGL_image"
 
 # GSF version (Google Services Framework)
-GSF_VERSION="$(adb shell dumpsys package com.google.android.gsf 2>/dev/null | grep -oP 'versionCode=\K\d+' | head -1)"
+GSF_VERSION="$(adb shell dumpsys package com.google.android.gsf 2>/dev/null | grep -oE 'versionCode=[0-9]+' | sed 's/versionCode=//' | head -1)"
 [[ -z "${GSF_VERSION}" ]] && GSF_VERSION="203615037"
 
 # Play Store version
-VENDING_VERSION="$(adb shell dumpsys package com.android.vending 2>/dev/null | grep -oP 'versionCode=\K\d+' | head -1)"
-VENDING_VERSION_STRING="$(adb shell dumpsys package com.android.vending 2>/dev/null | grep -oP 'versionName=\K\S+' | head -1)"
+VENDING_VERSION="$(adb shell dumpsys package com.android.vending 2>/dev/null | grep -oE 'versionCode=[0-9]+' | sed 's/versionCode=//' | head -1)"
+VENDING_VERSION_STRING="$(adb shell dumpsys package com.android.vending 2>/dev/null | grep -oE 'versionName=[^ ]+' | sed 's/versionName=//' | head -1)"
 [[ -z "${VENDING_VERSION}" ]] && VENDING_VERSION="82201710"
 [[ -z "${VENDING_VERSION_STRING}" ]] && VENDING_VERSION_STRING="unknown"
 

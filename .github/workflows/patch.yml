@@ -22,7 +22,7 @@ permissions:
 env:
   APKTOOL_VERSION: "2.10.0"
   APKEEP_VERSION: "0.18.0"
-  APKEEP_CUSTOM_TAG: "v0.18.1-shield"
+  APKEEP_CUSTOM_TAG: "1.0.0-bravia-8-ii"
   PLAYWRIGHT_BROWSERS_PATH: /home/runner/.cache/ms-playwright
 
 jobs:
@@ -35,6 +35,8 @@ jobs:
       should_build: ${{ steps.decide.outputs.should_build }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: bravia-8-ii
 
       - name: Restore apkeep cache
         id: apkeep-cache
@@ -132,6 +134,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: bravia-8-ii
 
       - uses: actions/setup-python@v5
         with:
@@ -196,23 +200,23 @@ jobs:
           path: /usr/local/bin/apkeep
           key: apkeep-custom-${{ env.APKEEP_CUSTOM_TAG }}
 
-      - name: Install custom apkeep (with Shield TV profile)
+      - name: Install custom apkeep (with Sony Bravia 8 II profile)
         if: ${{ !inputs.apkm_url && steps.apkeep-custom-cache.outputs.cache-hit != 'true' }}
         run: |
-          curl -sSL "https://github.com/Alexvbp/apkeep/releases/download/${APKEEP_CUSTOM_TAG}/apkeep-x86_64-linux.tar.gz" | tar xz -C /usr/local/bin/
+          curl -sSL "https://github.com/fen4o/apkeep/releases/download/${APKEEP_CUSTOM_TAG}/apkeep-x86_64-linux.tar.gz" | tar xz -C /usr/local/bin/
           chmod +x /usr/local/bin/apkeep
 
-      # ── Option A: Download from Google Play (arm64 via Shield profile) ──
+      # ── Option A: Download from Google Play (arm64 via Sony Bravia 8 II profile) ──
       - name: Download from Google Play
         if: ${{ !inputs.apkm_url && env.GOOGLE_EMAIL != '' }}
         id: download_gplay
         run: |
           mkdir -p download
-          echo "Downloading F1TV from Google Play (NVIDIA Shield TV profile)..."
+          echo "Downloading F1TV from Google Play (Sony Bravia 8 II profile)..."
           apkeep -d google-play \
             -e "${GOOGLE_EMAIL}" \
             -t "${GOOGLE_AAS_TOKEN}" \
-            -o "device=nvidia_shield_tv,split_apk=true" \
+            -o "device=gplayapi_sony_bravia_ae2.properties,split_apk=true" \
             --accept-tos \
             -a "com.formulaone.production" \
             download/
