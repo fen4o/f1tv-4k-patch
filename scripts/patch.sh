@@ -232,7 +232,7 @@ fi
 
 info "Patching NRP blit mode to direct-to-view (Amlogic only)..."
 RENDER_CONFIG="$(find "${DECOMPILED}" -name 'RenderAPIConfig.smali' -path '*/tiledmedia/*' -print -quit 2>/dev/null || true)"
-
+RENDER_CONFIG=""
 if [[ -n "${RENDER_CONFIG}" && -f "${RENDER_CONFIG}" ]]; then
     python3 - "${RENDER_CONFIG}" << 'PYEOF'
 import sys
